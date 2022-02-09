@@ -6,6 +6,8 @@ import "./interfaces/IAccessControlRegistryAdminnedWithManager.sol";
 
 /// @title Contract that should be inherited by contracts with manager whose
 /// adminship functionality will be implemented using AccessControlRegistry
+/// @notice The manager address here is expected to belong to an
+/// AccessControlRegistry user that is a multisig/DAO
 contract AccessControlRegistryAdminnedWithManager is
     AccessControlRegistryAdminned,
     IAccessControlRegistryAdminnedWithManager
@@ -18,7 +20,8 @@ contract AccessControlRegistryAdminnedWithManager is
     /// transferring managership.
     address public immutable override manager;
 
-    // Since `manager` is immutable, so is `adminRole`
+    /// @notice Admin role
+    /// @dev Since `manager` is immutable, so is `adminRole`
     bytes32 public immutable override adminRole;
 
     /// @param _accessControlRegistry AccessControlRegistry contract address

@@ -5,6 +5,7 @@ import "./Whitelist.sol";
 import "./WhitelistRolesWithManager.sol";
 import "./interfaces/IWhitelistWithManager.sol";
 
+/// @title Whitelist contract that is controlled by a manager
 contract WhitelistWithManager is
     Whitelist,
     WhitelistRolesWithManager,
@@ -39,8 +40,10 @@ contract WhitelistWithManager is
     ) external override {
         require(
             hasWhitelistExpirationExtenderRoleOrIsManager(msg.sender),
-            "Not expiration extender"
+            "Cannot extend expiration"
         );
+        require(serviceId != bytes32(0), "Service ID zero");
+        require(user != address(0), "User address zero");
         _extendWhitelistExpiration(serviceId, user, expirationTimestamp);
         emit ExtendedWhitelistExpiration(
             serviceId,
@@ -64,8 +67,10 @@ contract WhitelistWithManager is
     ) external override {
         require(
             hasWhitelistExpirationSetterRoleOrIsManager(msg.sender),
-            "Not expiration setter"
+            "Cannot set expiration"
         );
+        require(serviceId != bytes32(0), "Service ID zero");
+        require(user != address(0), "User address zero");
         _setWhitelistExpiration(serviceId, user, expirationTimestamp);
         emit SetWhitelistExpiration(
             serviceId,
@@ -88,8 +93,10 @@ contract WhitelistWithManager is
     ) external override {
         require(
             hasIndefiniteWhitelisterRoleOrIsManager(msg.sender),
-            "Not indefinite whitelister"
+            "Cannot set indefinite status"
         );
+        require(serviceId != bytes32(0), "Service ID zero");
+        require(user != address(0), "User address zero");
         uint192 indefiniteWhitelistCount = _setIndefiniteWhitelistStatus(
             serviceId,
             user,
@@ -116,7 +123,7 @@ contract WhitelistWithManager is
     ) external override {
         require(
             !hasIndefiniteWhitelisterRoleOrIsManager(setter),
-            "setter is indefinite whitelister"
+            "setter can set indefinite status"
         );
         (
             bool revoked,
