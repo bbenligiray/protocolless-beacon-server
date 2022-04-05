@@ -8,21 +8,21 @@ interface IDapiServer {
         uint256 timestamp
     );
 
-    event UpdatedDapiWithBeacons(
-        bytes32 indexed dapiId,
+    event UpdatedBeaconSetWithBeacons(
+        bytes32 indexed beaconSetId,
         int224 value,
         uint32 timestamp
     );
 
-    event UpdatedDapiWithSignedData(
-        bytes32 indexed dapiId,
+    event UpdatedBeaconSetWithSignedData(
+        bytes32 indexed beaconSetId,
         int224 value,
         uint32 timestamp
     );
 
-    event SetName(
-        bytes32 indexed name,
-        bytes32 dataPointId,
+    event SetDapiName(
+        bytes32 indexed dapiName,
+        bytes32 dataFeedId,
         address indexed sender
     );
 
@@ -34,47 +34,47 @@ interface IDapiServer {
         bytes calldata signature
     ) external;
 
-    function updateDapiWithBeacons(bytes32[] memory beaconIds)
+    function updateBeaconSetWithBeacons(bytes32[] memory beaconIds)
         external
-        returns (bytes32 dapiId);
+        returns (bytes32 beaconSetId);
 
-    function updateDapiWithSignedData(
+    function updateBeaconSetWithSignedData(
         address[] memory airnodes,
         bytes32[] memory templateIds,
         uint256[] memory timestamps,
         bytes[] memory data,
         bytes[] memory signatures
-    ) external returns (bytes32 dapiId);
+    ) external returns (bytes32 beaconSetId);
 
-    function setName(bytes32 name, bytes32 dataPointId) external;
+    function setDapiName(bytes32 dapiName, bytes32 dataFeedId) external;
 
-    function nameToDataPointId(bytes32 name) external view returns (bytes32);
+    function dapiNameToDataFeedId(bytes32 dapiName) external view returns (bytes32);
 
-    function readWithDataPointId(bytes32 dataPointId)
+    function readWithDataFeedId(bytes32 dataFeedId)
         external
         view
         returns (int224 value, uint32 timestamp);
 
-    function readWithName(bytes32 name)
+    function readWithDapiName(bytes32 dapiName)
         external
         view
         returns (int224 value, uint32 timestamp);
 
-    function readerCanReadDataPoint(bytes32 dataPointId, address reader)
+    function readerCanReadDataFeed(bytes32 dataFeedId, address reader)
         external
         view
         returns (bool);
 
-    function dataPointIdToReaderToWhitelistStatus(
-        bytes32 dataPointId,
+    function dataFeedIdToReaderToWhitelistStatus(
+        bytes32 dataFeedId,
         address reader
     )
         external
         view
         returns (uint64 expirationTimestamp, uint192 indefiniteWhitelistCount);
 
-    function dataPointIdToReaderToSetterToIndefiniteWhitelistStatus(
-        bytes32 dataPointId,
+    function dataFeedIdToReaderToSetterToIndefiniteWhitelistStatus(
+        bytes32 dataFeedId,
         address reader,
         address setter
     ) external view returns (bool indefiniteWhitelistStatus);
@@ -84,10 +84,10 @@ interface IDapiServer {
         pure
         returns (bytes32 beaconId);
 
-    function deriveDapiId(bytes32[] memory beaconIds)
+    function deriveBeaconSetId(bytes32[] memory beaconIds)
         external
         pure
-        returns (bytes32 dapiId);
+        returns (bytes32 beaconSetId);
 
     // solhint-disable-next-line func-name-mixedcase
     function UNLIMITED_READER_ROLE_DESCRIPTION()
@@ -96,12 +96,12 @@ interface IDapiServer {
         returns (string memory);
 
     // solhint-disable-next-line func-name-mixedcase
-    function NAME_SETTER_ROLE_DESCRIPTION()
+    function DAPI_NAME_SETTER_ROLE_DESCRIPTION()
         external
         view
         returns (string memory);
 
     function unlimitedReaderRole() external view returns (bytes32);
 
-    function nameSetterRole() external view returns (bytes32);
+    function dapiNameSetterRole() external view returns (bytes32);
 }
