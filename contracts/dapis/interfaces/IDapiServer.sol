@@ -20,6 +20,8 @@ interface IDapiServer {
         uint32 timestamp
     );
 
+    event AddedUnlimitedReader(address indexed unlimitedReader);
+
     event SetName(
         bytes32 indexed name,
         bytes32 dataPointId,
@@ -45,6 +47,8 @@ interface IDapiServer {
         bytes[] memory data,
         bytes[] memory signatures
     ) external returns (bytes32 dapiId);
+
+    function addUnlimitedReader(address unlimitedReader) external;
 
     function setName(bytes32 name, bytes32 dataPointId) external;
 
@@ -100,18 +104,10 @@ interface IDapiServer {
         returns (bytes32 dapiId);
 
     // solhint-disable-next-line func-name-mixedcase
-    function UNLIMITED_READER_ROLE_DESCRIPTION()
-        external
-        view
-        returns (string memory);
-
-    // solhint-disable-next-line func-name-mixedcase
     function NAME_SETTER_ROLE_DESCRIPTION()
         external
         view
         returns (string memory);
-
-    function unlimitedReaderRole() external view returns (bytes32);
 
     function nameSetterRole() external view returns (bytes32);
 }
