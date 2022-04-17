@@ -257,7 +257,7 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
     /// @param dataPointId Data point ID
     /// @return value Data point value
     /// @return timestamp Data point timestamp
-    function readWithDataPointId(bytes32 dataPointId)
+    function readDataPointWithId(bytes32 dataPointId)
         external
         view
         override
@@ -277,7 +277,7 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
     /// @param name Data point name
     /// @return value Data point value
     /// @return timestamp Data point timestamp
-    function readWithName(bytes32 name)
+    function readDataPointWithName(bytes32 name)
         external
         view
         override
