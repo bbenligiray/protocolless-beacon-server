@@ -229,7 +229,6 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
     /// @param dataPointId Data point ID the name will point to
     function setName(bytes32 name, bytes32 dataPointId) external override {
         require(name != bytes32(0), "Name zero");
-        require(dataPointId != bytes32(0), "Data point ID zero");
         require(
             msg.sender == manager ||
                 IAccessControlRegistry(accessControlRegistry).hasRole(
@@ -289,9 +288,9 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
             readerCanReadDataPoint(nameHash, msg.sender),
             "Sender cannot read"
         );
-        DataPoint storage dataPoint = dataPoints[
-            nameHashToDataPointId[nameHash]
-        ];
+        bytes32 dataPointId = nameHashToDataPointId[nameHash];
+        require(dataPointId != bytes32(0), "Name not set");
+        DataPoint storage dataPoint = dataPoints[dataPointId];
         return (dataPoint.value, dataPoint.timestamp);
     }
 
