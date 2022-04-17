@@ -257,7 +257,7 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
     /// @param dataPointId Data point ID
     /// @return value Data point value
     /// @return timestamp Data point timestamp
-    function readWithDataPointId(bytes32 dataPointId)
+    function readDataPointWithId(bytes32 dataPointId)
         external
         view
         override
@@ -271,13 +271,28 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
         return (dataPoint.value, dataPoint.timestamp);
     }
 
+    function readDataPointValueWithId(bytes32 dataPointId)
+        external
+        view
+        override
+        returns (int224 value)
+    {
+        require(
+            readerCanReadDataPoint(dataPointId, msg.sender),
+            "Sender cannot read"
+        );
+        DataPoint storage dataPoint = dataPoints[dataPointId];
+        require(dataPoint.timestamp != 0, "Data point does not exist");
+        return dataPoints[dataPointId].value;
+    }
+
     /// @notice Reads the data point with name
     /// @dev The read data point may belong to a Beacon or dAPI. The reader
     /// must be whitelisted for the hash of the data point name.
     /// @param name Data point name
     /// @return value Data point value
     /// @return timestamp Data point timestamp
-    function readWithName(bytes32 name)
+    function readDataPointWithName(bytes32 name)
         external
         view
         override
@@ -292,6 +307,24 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
         require(dataPointId != bytes32(0), "Name not set");
         DataPoint storage dataPoint = dataPoints[dataPointId];
         return (dataPoint.value, dataPoint.timestamp);
+    }
+
+    function readDataPointValueWithName(bytes32 name)
+        external
+        view
+        override
+        returns (int224 value)
+    {
+        bytes32 nameHash = keccak256(abi.encodePacked(name));
+        require(
+            readerCanReadDataPoint(nameHash, msg.sender),
+            "Sender cannot read"
+        );
+        DataPoint storage dataPoint = dataPoints[
+            nameHashToDataPointId[nameHash]
+        ];
+        require(dataPoint.timestamp != 0, "Data feed does not exist");
+        return dataPoint.value;
     }
 
     /// @notice Returns if a reader can read the data point

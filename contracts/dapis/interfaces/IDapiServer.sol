@@ -50,15 +50,25 @@ interface IDapiServer {
 
     function nameToDataPointId(bytes32 name) external view returns (bytes32);
 
-    function readWithDataPointId(bytes32 dataPointId)
+    function readDataPointWithId(bytes32 dataPointId)
         external
         view
         returns (int224 value, uint32 timestamp);
 
-    function readWithName(bytes32 name)
+    function readDataPointValueWithId(bytes32 dataPointId)
+        external
+        view
+        returns (int224 value);
+
+    function readDataPointWithName(bytes32 name)
         external
         view
         returns (int224 value, uint32 timestamp);
+
+    function readDataPointValueWithName(bytes32 name)
+        external
+        view
+        returns (int224 value);
 
     function readerCanReadDataPoint(bytes32 dataPointId, address reader)
         external
