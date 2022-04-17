@@ -36,19 +36,14 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
         uint32 timestamp;
     }
 
-    /// @notice Unlimited reader role description
-    string public constant override UNLIMITED_READER_ROLE_DESCRIPTION =
-        "Unlimited reader";
-
     /// @notice Name setter role description
     string public constant override NAME_SETTER_ROLE_DESCRIPTION =
         "Name setter";
 
-    /// @notice Unlimited reader role
-    bytes32 public immutable override unlimitedReaderRole;
-
     /// @notice Name setter role
     bytes32 public immutable override nameSetterRole;
+
+    mapping(address => bool) public unlimitedReaderStatus;
 
     mapping(bytes32 => DataPoint) private dataPoints;
 
@@ -75,10 +70,6 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
             _manager
         )
     {
-        unlimitedReaderRole = _deriveRole(
-            _deriveAdminRole(manager),
-            keccak256(abi.encodePacked(UNLIMITED_READER_ROLE_DESCRIPTION))
-        );
         nameSetterRole = _deriveRole(
             _deriveAdminRole(manager),
             keccak256(abi.encodePacked(NAME_SETTER_ROLE_DESCRIPTION))
@@ -220,6 +211,16 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
         emit UpdatedDapiWithSignedData(dapiId, updatedValue, updatedTimestamp);
     }
 
+    /// @notice Called by the manager to add the unlimited reader indefinitely
+    /// @dev Since the unlimited reader status cannot be revoked, only
+    /// contracts that are adequately restricted should be given this status
+    /// @param unlimitedReader Unlimited reader address
+    function addUnlimitedReader(address unlimitedReader) external override {
+        require(msg.sender == manager, "Sender not manager");
+        unlimitedReaderStatus[unlimitedReader] = true;
+        emit AddedUnlimitedReader(unlimitedReader);
+    }
+
     /// @notice Sets the data point ID the name points to
     /// @dev While a data point ID refers to a specific Beacon or dAPI, names
     /// provide a more abstract interface for convenience. This means a name
@@ -340,10 +341,7 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
         return
             reader == address(0) ||
             userIsWhitelisted(dataPointId, reader) ||
-            IAccessControlRegistry(accessControlRegistry).hasRole(
-                unlimitedReaderRole,
-                reader
-            );
+            unlimitedReaderStatus[reader];
     }
 
     /// @notice Returns the detailed whitelist status of the reader for the
