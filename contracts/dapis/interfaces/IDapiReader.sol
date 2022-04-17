@@ -22,4 +22,9 @@ interface IBaseDapiServer {
         external
         view
         returns (int224 value, uint32 timestamp);
+
+    function readDataPointValueWithName(bytes32 name)
+        external
+        view
+        returns (int224 value);
 }

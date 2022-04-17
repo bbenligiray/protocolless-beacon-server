@@ -309,6 +309,24 @@ contract DapiServer is WhitelistWithManager, Median, IDapiServer {
         return (dataPoint.value, dataPoint.timestamp);
     }
 
+    function readDataPointValueWithName(bytes32 name)
+        external
+        view
+        override
+        returns (int224 value)
+    {
+        bytes32 nameHash = keccak256(abi.encodePacked(name));
+        require(
+            readerCanReadDataPoint(nameHash, msg.sender),
+            "Sender cannot read"
+        );
+        DataPoint storage dataPoint = dataPoints[
+            nameHashToDataPointId[nameHash]
+        ];
+        require(dataPoint.timestamp != 0, "Data feed does not exist");
+        return dataPoint.value;
+    }
+
     /// @notice Returns if a reader can read the data point
     /// @param dataPointId Data point ID (or data point name hash)
     /// @param reader Reader address

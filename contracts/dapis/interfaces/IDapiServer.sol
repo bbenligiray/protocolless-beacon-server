@@ -65,6 +65,11 @@ interface IDapiServer {
         view
         returns (int224 value, uint32 timestamp);
 
+    function readDataPointValueWithName(bytes32 name)
+        external
+        view
+        returns (int224 value);
+
     function readerCanReadDataPoint(bytes32 dataPointId, address reader)
         external
         view
