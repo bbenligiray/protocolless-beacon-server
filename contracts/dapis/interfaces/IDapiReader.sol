@@ -17,14 +17,4 @@ interface IBaseDapiServer {
         external
         view
         returns (int224 value);
-
-    function readDataFeedWithDapiName(bytes32 dapiName)
-        external
-        view
-        returns (int224 value, uint32 timestamp);
-
-    function readDataFeedValueWithDapiName(bytes32 dapiName)
-        external
-        view
-        returns (int224 value);
 }
